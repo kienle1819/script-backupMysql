@@ -1,0 +1,19 @@
+#!/bin/bash
+CURRENT_DIR=/root/backup
+MYSQL_DIR=$CURRENT_DIR/mysql
+MYSQLUSER=root
+MYSQLPASSWORD='youroorpasswordhere'
+TODAY=`date +%d_%m_%Y`
+if [ ! -d "$MYSQL_DIR" ]; then
+  # Control will enter here if $DIRECTORY doesn't exist.
+  mkdir $MYSQL_DIR
+fi
+
+while read line
+do 
+	#echo -e "$line"; 
+	mysqldump -u root -p"$MYSQLPASSWORD" $line | gzip >  $MYSQL_DIR/$line.$TODAY.sql.gz;
+	sleep 30;
+done < $CURRENT_DIR/mysqldb.txt
+#delete old files
+find $MYSQL_DIR -type f -mtime +7 -exec rm {} \;
